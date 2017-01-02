@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/listPreferredItemHeight"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/ar_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="start|bottom"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        tools:text="7:00"/>
+
+    <TextView
+        android:id="@+id/ar_am_pm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignBaseline="@+id/ar_time"
+        android:layout_toRightOf="@+id/ar_time"
+        android:layout_toEndOf="@+id/ar_time"
+        tools:text="AM"/>
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_toRightOf="@+id/ar_am_pm"-->
+    <!--android:layout_toEndOf="@+id/ar_am_pm"-->
+    <!--android:layout_toLeftOf="@+id/ar_icon"-->
+    <!--android:layout_toStartOf="@+id/ar_icon"-->
+    <!--android:layout_alignTop="@+id/ar_time"-->
+    <!--android:layout_alignBottom="@+id/ar_time"-->
+    <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+    <!--android:layout_marginRight="@dimen/activity_horizontal_margin">-->
+
+
+    <ImageView
+        android:id="@+id/ar_repeat_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_repeat_black_24dp"
+        android:layout_toRightOf="@+id/ar_am_pm"
+        android:layout_toEndOf="@+id/ar_am_pm"
+        android:layout_alignTop="@+id/ar_time"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/ar_repeat_icon"
+        android:layout_toEndOf="@+id/ar_repeat_icon"
+        android:layout_toLeftOf="@+id/ar_icon"
+        android:layout_toStartOf="@+id/ar_icon"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/ar_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Get Up"/>
+
+        <TextView
+            android:id="@+id/ar_days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="M Tu W Th F Sa Su"/>
+
+    </LinearLayout>
+
+    <!--<TextView-->
+    <!--android:id="@+id/ar_label"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_toRightOf="@+id/ar_am_pm"-->
+    <!--android:layout_toEndOf="@+id/ar_am_pm"-->
+    <!--android:layout_toLeftOf="@+id/ar_repeat_icon"-->
+    <!--android:layout_toStartOf="@+id/ar_repeat_icon"-->
+    <!--android:layout_alignTop="@+id/ar_time"-->
+    <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+    <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+    <!--tools:text="Get Up"/>-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/ar_days"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textAllCaps="true"-->
+    <!--tools:text="M Tu W Th F Sa Su"/>-->
+
+    <!--</LinearLayout>-->
+
+    <ImageView
+        android:id="@+id/ar_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:tint="@color/colorAccent"
+        android:src="@drawable/ic_alarm_white_24dp"/>
+
+</RelativeLayout>
