@@ -1,15 +1,51 @@
 package com.github.ppartisan.simplealarms.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.util.SparseBooleanArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public final class Alarm {
+public final class Alarm implements Parcelable{
+
+    private Alarm(Parcel in) {
+        id = in.readLong();
+        time = in.readLong();
+        label = in.readString();
+        allDays = in.readSparseBooleanArray();
+        isEnabled = in.readByte() != 0;
+    }
+
+    public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
+        @Override
+        public Alarm createFromParcel(Parcel in) {
+            return new Alarm(in);
+        }
+
+        @Override
+        public Alarm[] newArray(int size) {
+            return new Alarm[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeLong(time);
+        parcel.writeString(label);
+        parcel.writeSparseBooleanArray(allDays);
+        parcel.writeByte((byte) (isEnabled ? 1 : 0));
+    }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({MON,TUES, WED, THURS, FRI, SAT, SUN})
+    @IntDef({MON,TUES,WED,THURS,FRI,SAT,SUN})
     @interface Days{}
     public static final int MON = 1;
     public static final int TUES = 2;
@@ -66,16 +102,16 @@ public final class Alarm {
         return label;
     }
 
-    public void setAlarmedDays(@Days int... days) {
-        allDays = buildDaysArray(days);
-    }
-
     public void setDay(@Days int day, boolean isAlarmed) {
         allDays.append(day, isAlarmed);
     }
 
     public SparseBooleanArray getDays() {
         return allDays;
+    }
+
+    public boolean getDay(@Days int day){
+        return allDays.get(day);
     }
 
     public void setIsEnabled(boolean isEnabled) {
@@ -95,6 +131,18 @@ public final class Alarm {
                 ", allDays=" + allDays +
                 ", isEnabled=" + isEnabled +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + (int) (id^(id>>>32));
+        result = 31 * result + (int) (time^(time>>>32));
+        result = 31 * result + label.hashCode();
+        for(int i = 0; i < allDays.size(); i++) {
+            result = 31 * result + (allDays.valueAt(i)? 1 : 0);
+        }
+        return result;
     }
 
     private static SparseBooleanArray buildDaysArray(@Days int... days) {

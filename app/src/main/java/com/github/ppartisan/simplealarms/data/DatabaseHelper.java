@@ -9,7 +9,7 @@ import android.util.Log;
 import com.github.ppartisan.simplealarms.model.Alarm;
 import com.github.ppartisan.simplealarms.util.AlarmUtils;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public final class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -71,7 +71,11 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
         throw new UnsupportedOperationException("This shouldn't happen yet!");
     }
 
-    public long addAlarm(Alarm alarm) {
+    public long addAlarm() {
+        return addAlarm(new Alarm());
+    }
+
+    long addAlarm(Alarm alarm) {
         return getWritableDatabase().insert(TABLE_NAME, null, AlarmUtils.toContentValues(alarm));
     }
 
@@ -86,13 +90,13 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
         return deleteAlarm(alarm.getId());
     }
 
-    public int deleteAlarm(long id) {
+    int deleteAlarm(long id) {
         final String where = _ID + "=?";
         final String[] whereArgs = new String[] { Long.toString(id) };
         return getWritableDatabase().delete(TABLE_NAME, where, whereArgs);
     }
 
-    public List<Alarm> getAlarms() {
+    public ArrayList<Alarm> getAlarms() {
 
         Cursor c = null;
 

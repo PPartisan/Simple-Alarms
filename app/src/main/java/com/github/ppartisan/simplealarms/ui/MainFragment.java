@@ -1,8 +1,12 @@
 package com.github.ppartisan.simplealarms.ui;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,21 +17,24 @@ import android.view.ViewGroup;
 import com.github.ppartisan.simplealarms.R;
 import com.github.ppartisan.simplealarms.adapter.AlarmsAdapter;
 import com.github.ppartisan.simplealarms.model.Alarm;
+import com.github.ppartisan.simplealarms.service.LoadAlarmsReceiver;
+import com.github.ppartisan.simplealarms.service.LoadAlarmsService;
+import com.github.ppartisan.simplealarms.util.AlarmUtils;
+import com.github.ppartisan.simplealarms.view.DividerItemDecoration;
+import com.github.ppartisan.simplealarms.view.EmptyRecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public final class MainFragment extends Fragment {
+public final class MainFragment extends Fragment
+        implements LoadAlarmsReceiver.OnAlarmsLoadedListener {
 
+    private LoadAlarmsReceiver mReceiver;
     private AlarmsAdapter mAdapter;
 
-    public static MainFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        MainFragment fragment = new MainFragment();
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mReceiver = new LoadAlarmsReceiver(this);
     }
 
     @Nullable
@@ -36,33 +43,48 @@ public final class MainFragment extends Fragment {
 
         final View v = inflater.inflate(R.layout.fragment_main, container, false);
 
-        final RecyclerView rv = (RecyclerView) v.findViewById(R.id.recycler);
+        final EmptyRecyclerView rv = (EmptyRecyclerView) v.findViewById(R.id.recycler);
         mAdapter = new AlarmsAdapter();
+        rv.setEmptyView(v.findViewById(R.id.empty_view));
         rv.setAdapter(mAdapter);
+        rv.addItemDecoration(new DividerItemDecoration(getContext()));
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter.setAlarms(buildDummyAlarms());
+        final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlarmUtils.checkAlarmPermissions(getActivity());
+                final Intent i =
+                        AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
+                                getContext(), AddEditAlarmActivity.ADD_ALARM
+                        );
+                startActivity(i);
+            }
+        });
 
         return v;
 
     }
 
-    private static List<Alarm> buildDummyAlarms() {
+    @Override
+    public void onStart() {
+        super.onStart();
+        final IntentFilter filter = new IntentFilter(LoadAlarmsService.ACTION_COMPLETE);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, filter);
+        LoadAlarmsService.launchLoadAlarmsService(getContext());
+    }
 
-        final List<Alarm> alarms = new ArrayList<>(3);
+    @Override
+    public void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
 
-        for (int i = 0; i < 3; i++) {
-            final Alarm alarm = new Alarm();
-            alarm.setTime(System.currentTimeMillis() - (i*1000000));
-            alarm.setDay(Alarm.SUN, true);
-            alarm.setDay(Alarm.MON, true);
-            alarm.setLabel("Number: " + i);
-            alarms.add(alarm);
-        }
-
-        return alarms;
-
+    @Override
+    public void onAlarmsLoaded(ArrayList<Alarm> alarms) {
+        mAdapter.setAlarms(alarms);
     }
 
 }

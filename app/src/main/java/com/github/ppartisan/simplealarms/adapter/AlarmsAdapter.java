@@ -1,15 +1,13 @@
 package com.github.ppartisan.simplealarms.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,7 @@ import android.widget.TextView;
 
 import com.github.ppartisan.simplealarms.R;
 import com.github.ppartisan.simplealarms.model.Alarm;
+import com.github.ppartisan.simplealarms.ui.AddEditAlarmActivity;
 import com.github.ppartisan.simplealarms.util.AlarmUtils;
 
 import java.util.List;
@@ -39,9 +38,13 @@ public final class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+        final Context c = holder.itemView.getContext();
+
         if(mAccentColor == -1) {
-            final Context c = holder.itemView.getContext();
-            mAccentColor = ContextCompat.getColor(c, R.color.colorAccent);
+            mAccentColor = ContextCompat.getColor(c, R.color.accent);
+        }
+
+        if(mDays == null){
             mDays = c.getResources().getStringArray(R.array.days_abbreviated);
         }
 
@@ -51,6 +54,19 @@ public final class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.View
         holder.amPm.setText(AlarmUtils.getAmPm(alarm.getTime()));
         holder.label.setText(alarm.getLabel());
         holder.days.setText(buildSelectedDays(alarm));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Context c = view.getContext();
+                final Intent launchEditAlarmIntent =
+                        AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
+                                c, AddEditAlarmActivity.EDIT_ALARM
+                        );
+                launchEditAlarmIntent.putExtra(AddEditAlarmActivity.ALARM_EXTRA, alarm);
+                c.startActivity(launchEditAlarmIntent);
+            }
+        });
 
     }
 
