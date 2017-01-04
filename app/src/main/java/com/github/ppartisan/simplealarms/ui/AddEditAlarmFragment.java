@@ -144,6 +144,10 @@ public final class AddEditAlarmFragment extends Fragment {
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+
+                //Cancel any pending notifications for this alarm
+                AlarmReceiver.cancelReminderAlarm(getContext(), alarm);
+
                 final int rowsDeleted = DatabaseHelper.getInstance(getContext()).deleteAlarm(alarm);
                 int messageId;
                 if(rowsDeleted == 1) {

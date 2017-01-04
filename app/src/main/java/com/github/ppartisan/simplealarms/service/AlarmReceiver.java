@@ -122,7 +122,7 @@ public final class AlarmReceiver extends BroadcastReceiver {
 
     }
 
-    private static void cancelReminderAlarm(Context context, Alarm alarm) {
+    public static void cancelReminderAlarm(Context context, Alarm alarm) {
 
         final Intent intent = new Intent(context, AlarmReceiver.class);
         final PendingIntent pIntent = PendingIntent.getBroadcast(

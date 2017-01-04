@@ -31,8 +31,6 @@ public final class LoadAlarmsService extends IntentService {
 
         final ArrayList<Alarm> alarms = DatabaseHelper.getInstance(this).getAlarms();
 
-        Log.e(getClass().getSimpleName(), "onHandleIntent. Alarms size: " + alarms.size());
-
         final Intent i = new Intent(ACTION_COMPLETE);
         i.putParcelableArrayListExtra(ALARMS_EXTRA, alarms);
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
