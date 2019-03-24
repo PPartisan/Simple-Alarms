@@ -2,6 +2,7 @@ package com.github.ppartisan.simplealarms.service;
 
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -22,9 +23,14 @@ import com.github.ppartisan.simplealarms.util.AlarmUtils;
 
 import java.util.Calendar;
 
+import static android.app.NotificationManager.IMPORTANCE_HIGH;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.O;
+
 public final class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
+    private static final String CHANNEL_ID = "alarm_channel";
 
     private static final String BUNDLE_EXTRA = "bundle_extra";
     private static final String ALARM_KEY = "alarm_key";
@@ -49,7 +55,9 @@ public final class AlarmReceiver extends BroadcastReceiver {
                 context, id, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        createNotificationChannel(context);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         builder.setSmallIcon(R.drawable.ic_alarm_white_24dp);
         builder.setColor(ContextCompat.getColor(context, R.color.accent));
         builder.setContentTitle(context.getString(R.string.app_name));
@@ -93,7 +101,7 @@ public final class AlarmReceiver extends BroadcastReceiver {
         );
         final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+        if(SDK_INT < Build.VERSION_CODES.KITKAT) {
             am.set(AlarmManager.RTC_WAKEUP, alarm.getTime(), pIntent);
         } else {
             am.setExact(AlarmManager.RTC_WAKEUP, alarm.getTime(), pIntent);
@@ -180,6 +188,23 @@ public final class AlarmReceiver extends BroadcastReceiver {
 
         return startIndex;
 
+    }
+
+    private static void createNotificationChannel(Context ctx) {
+        if(SDK_INT < O) return;
+
+        final NotificationManager mgr = ctx.getSystemService(NotificationManager.class);
+        if(mgr == null) return;
+
+        final String name = ctx.getString(R.string.channel_name);
+        if(mgr.getNotificationChannel(name) == null) {
+            final NotificationChannel channel =
+                    new NotificationChannel(CHANNEL_ID, name, IMPORTANCE_HIGH);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[] {1000,500,1000,500,1000,500});
+            channel.setBypassDnd(true);
+            mgr.createNotificationChannel(channel);
+        }
     }
 
 }
