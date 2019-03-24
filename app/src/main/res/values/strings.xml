@@ -37,4 +37,7 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
 
+    <!-- Notification -->
+    <string name="channel_name">Simple Alarms</string>
+
 </resources>
