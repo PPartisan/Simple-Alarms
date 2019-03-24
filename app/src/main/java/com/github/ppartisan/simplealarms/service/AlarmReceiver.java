@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import com.github.ppartisan.simplealarms.R;
@@ -22,12 +24,20 @@ import java.util.Calendar;
 
 public final class AlarmReceiver extends BroadcastReceiver {
 
-    private static final String ALARM_EXTRA = "alarm_extra";
+    private static final String TAG = AlarmReceiver.class.getSimpleName();
+
+    private static final String BUNDLE_EXTRA = "bundle_extra";
+    private static final String ALARM_KEY = "alarm_key";
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        final Alarm alarm = intent.getParcelableExtra(ALARM_EXTRA);
+        final Alarm alarm = intent.getBundleExtra(BUNDLE_EXTRA).getParcelable(ALARM_KEY);
+        if(alarm == null) {
+            Log.e(TAG, "Alarm is null", new NullPointerException());
+            return;
+        }
+
         final int id = AlarmUtils.getNotificationId(alarm);
 
         final NotificationManager manager =
@@ -71,7 +81,10 @@ public final class AlarmReceiver extends BroadcastReceiver {
         alarm.setTime(nextAlarmTime.getTimeInMillis());
 
         final Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(ALARM_EXTRA, alarm);
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(ALARM_KEY, alarm);
+        intent.putExtra(BUNDLE_EXTRA, bundle);
+
         final PendingIntent pIntent = PendingIntent.getBroadcast(
                 context,
                 AlarmUtils.getNotificationId(alarm),
