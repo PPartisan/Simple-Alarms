@@ -1,5 +1,7 @@
 package com.github.ppartisan.simplealarms.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +25,12 @@ public final class AlarmLandingPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_landing_page);
 
+    }
+
+    public static Intent launchIntent(Context context) {
+        final Intent i = new Intent(context, AlarmLandingPageActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return i;
     }
 
 }

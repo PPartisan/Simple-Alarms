@@ -122,6 +122,11 @@ public final class Alarm implements Parcelable{
         return isEnabled;
     }
 
+    public int notificationId() {
+        final long id = getId();
+        return (int) (id^(id>>>32));
+    }
+
     @Override
     public String toString() {
         return "Alarm{" +

@@ -1,0 +1,8 @@
+.idea
+*.iml
+.gradle
+/build
+local.properties
+gradle/wrapper/gradle-wrapper.jar
+gradlew
+gradlew.bat
