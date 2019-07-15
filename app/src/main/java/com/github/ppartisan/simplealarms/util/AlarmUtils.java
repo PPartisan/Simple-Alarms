@@ -151,11 +151,6 @@ public final class AlarmUtils {
 
     }
 
-    public static int getNotificationId(Alarm alarm) {
-        final long id = alarm.getId();
-        return (int) (id^(id>>>32));
-    }
-
     public static String getActiveDaysAsString(Alarm alarm) {
 
         StringBuilder builder = new StringBuilder("Active Days: ");

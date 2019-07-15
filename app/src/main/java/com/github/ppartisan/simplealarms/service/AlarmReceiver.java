@@ -1,6 +1,7 @@
 package com.github.ppartisan.simplealarms.service;
 
 import android.app.AlarmManager;
+import android.app.AlarmManager.AlarmClockInfo;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,8 +10,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -18,14 +19,17 @@ import android.util.SparseBooleanArray;
 
 import com.github.ppartisan.simplealarms.R;
 import com.github.ppartisan.simplealarms.model.Alarm;
-import com.github.ppartisan.simplealarms.ui.AlarmLandingPageActivity;
 import com.github.ppartisan.simplealarms.util.AlarmUtils;
 
 import java.util.Calendar;
 
 import static android.app.NotificationManager.IMPORTANCE_HIGH;
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.KITKAT;
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.O;
+import static com.github.ppartisan.simplealarms.ui.AlarmLandingPageActivity.launchIntent;
 
 public final class AlarmReceiver extends BroadcastReceiver {
 
@@ -44,16 +48,10 @@ public final class AlarmReceiver extends BroadcastReceiver {
             return;
         }
 
-        final int id = AlarmUtils.getNotificationId(alarm);
+        final int id = alarm.notificationId();
 
         final NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        final Intent notifIntent = new Intent(context, AlarmLandingPageActivity.class);
-        notifIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        final PendingIntent pIntent = PendingIntent.getActivity(
-                context, id, notifIntent, PendingIntent.FLAG_UPDATE_CURRENT
-        );
 
         createNotificationChannel(context);
 
@@ -65,7 +63,7 @@ public final class AlarmReceiver extends BroadcastReceiver {
         builder.setTicker(alarm.getLabel());
         builder.setVibrate(new long[] {1000,500,1000,500,1000,500});
         builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-        builder.setContentIntent(pIntent);
+        builder.setContentIntent(launchAlarmLandingPage(context, alarm));
         builder.setAutoCancel(true);
         builder.setPriority(Notification.PRIORITY_HIGH);
 
@@ -95,18 +93,12 @@ public final class AlarmReceiver extends BroadcastReceiver {
 
         final PendingIntent pIntent = PendingIntent.getBroadcast(
                 context,
-                AlarmUtils.getNotificationId(alarm),
+                alarm.notificationId(),
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                FLAG_UPDATE_CURRENT
         );
-        final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if(SDK_INT < Build.VERSION_CODES.KITKAT) {
-            am.set(AlarmManager.RTC_WAKEUP, alarm.getTime(), pIntent);
-        } else {
-            am.setExact(AlarmManager.RTC_WAKEUP, alarm.getTime(), pIntent);
-        }
-
+        ScheduleAlarm.with(context).schedule(alarm, pIntent);
     }
 
     /**
@@ -148,9 +140,9 @@ public final class AlarmReceiver extends BroadcastReceiver {
         final Intent intent = new Intent(context, AlarmReceiver.class);
         final PendingIntent pIntent = PendingIntent.getBroadcast(
                 context,
-                AlarmUtils.getNotificationId(alarm),
+                alarm.notificationId(),
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                FLAG_UPDATE_CURRENT
         );
 
         final AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -205,6 +197,42 @@ public final class AlarmReceiver extends BroadcastReceiver {
             channel.setBypassDnd(true);
             mgr.createNotificationChannel(channel);
         }
+    }
+
+    private static PendingIntent launchAlarmLandingPage(Context ctx, Alarm alarm) {
+        return PendingIntent.getActivity(
+                ctx, alarm.notificationId(), launchIntent(ctx), FLAG_UPDATE_CURRENT
+        );
+    }
+
+    private static class ScheduleAlarm {
+
+        @NonNull private final Context ctx;
+        @NonNull private final AlarmManager am;
+
+        private ScheduleAlarm(@NonNull AlarmManager am, @NonNull Context ctx) {
+            this.am = am;
+            this.ctx = ctx;
+        }
+
+        static ScheduleAlarm with(Context context) {
+            final AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if(am == null) {
+                throw new IllegalStateException("AlarmManager is null");
+            }
+            return new ScheduleAlarm(am, context);
+        }
+
+        void schedule(Alarm alarm, PendingIntent pi) {
+            if(SDK_INT > LOLLIPOP) {
+                am.setAlarmClock(new AlarmClockInfo(alarm.getTime(), launchAlarmLandingPage(ctx, alarm)), pi);
+            } else if(SDK_INT > KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, alarm.getTime(), pi);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, alarm.getTime(), pi);
+            }
+        }
+
     }
 
 }
