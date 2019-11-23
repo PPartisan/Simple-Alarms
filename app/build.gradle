@@ -5,6 +5,8 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.github.ppartisan.simplealarms"
+        //Priority levels: 999 is max, 0 is default, -999 is min
+        manifestPlaceholders = [bootPriority:"999"]
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
@@ -18,11 +20,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
