@@ -9,7 +9,7 @@ import android.util.Log;
 import com.github.ppartisan.simplealarms.model.Alarm;
 import com.github.ppartisan.simplealarms.util.AlarmUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public final class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -96,7 +96,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().delete(TABLE_NAME, where, whereArgs);
     }
 
-    public ArrayList<Alarm> getAlarms() {
+    public List<Alarm> getAlarms() {
 
         Cursor c = null;
 

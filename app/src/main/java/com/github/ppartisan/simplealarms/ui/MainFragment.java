@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,9 @@ import com.github.ppartisan.simplealarms.view.DividerItemDecoration;
 import com.github.ppartisan.simplealarms.view.EmptyRecyclerView;
 
 import java.util.ArrayList;
+
+import static com.github.ppartisan.simplealarms.ui.AddEditAlarmActivity.ADD_ALARM;
+import static com.github.ppartisan.simplealarms.ui.AddEditAlarmActivity.buildAddEditAlarmActivityIntent;
 
 public final class MainFragment extends Fragment
         implements LoadAlarmsReceiver.OnAlarmsLoadedListener {
@@ -43,7 +45,7 @@ public final class MainFragment extends Fragment
 
         final View v = inflater.inflate(R.layout.fragment_main, container, false);
 
-        final EmptyRecyclerView rv = (EmptyRecyclerView) v.findViewById(R.id.recycler);
+        final EmptyRecyclerView rv = v.findViewById(R.id.recycler);
         mAdapter = new AlarmsAdapter();
         rv.setEmptyView(v.findViewById(R.id.empty_view));
         rv.setAdapter(mAdapter);
@@ -51,17 +53,11 @@ public final class MainFragment extends Fragment
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setItemAnimator(new DefaultItemAnimator());
 
-        final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlarmUtils.checkAlarmPermissions(getActivity());
-                final Intent i =
-                        AddEditAlarmActivity.buildAddEditAlarmActivityIntent(
-                                getContext(), AddEditAlarmActivity.ADD_ALARM
-                        );
-                startActivity(i);
-            }
+        final FloatingActionButton fab = v.findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            AlarmUtils.checkAlarmPermissions(getActivity());
+            final Intent i = buildAddEditAlarmActivityIntent(getContext(), ADD_ALARM);
+            startActivity(i);
         });
 
         return v;

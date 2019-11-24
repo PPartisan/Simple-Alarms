@@ -4,12 +4,12 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.github.ppartisan.simplealarms.data.DatabaseHelper;
 import com.github.ppartisan.simplealarms.model.Alarm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class LoadAlarmsService extends IntentService {
 
@@ -29,10 +29,10 @@ public final class LoadAlarmsService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        final ArrayList<Alarm> alarms = DatabaseHelper.getInstance(this).getAlarms();
+        final List<Alarm> alarms = DatabaseHelper.getInstance(this).getAlarms();
 
         final Intent i = new Intent(ACTION_COMPLETE);
-        i.putParcelableArrayListExtra(ALARMS_EXTRA, alarms);
+        i.putParcelableArrayListExtra(ALARMS_EXTRA, new ArrayList<>(alarms));
         LocalBroadcastManager.getInstance(this).sendBroadcast(i);
 
     }

@@ -112,15 +112,15 @@ public final class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.View
 
     static final class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView time, amPm, label, days;
+        final TextView time, amPm, label, days;
 
         ViewHolder(View itemView) {
             super(itemView);
 
-            time = (TextView) itemView.findViewById(R.id.ar_time);
-            amPm = (TextView) itemView.findViewById(R.id.ar_am_pm);
-            label = (TextView) itemView.findViewById(R.id.ar_label);
-            days = (TextView) itemView.findViewById(R.id.ar_days);
+            time = itemView.findViewById(R.id.ar_time);
+            amPm = itemView.findViewById(R.id.ar_am_pm);
+            label = itemView.findViewById(R.id.ar_label);
+            days = itemView.findViewById(R.id.ar_days);
 
         }
     }

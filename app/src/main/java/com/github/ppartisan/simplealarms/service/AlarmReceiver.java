@@ -22,6 +22,7 @@ import com.github.ppartisan.simplealarms.model.Alarm;
 import com.github.ppartisan.simplealarms.util.AlarmUtils;
 
 import java.util.Calendar;
+import java.util.List;
 
 import static android.app.NotificationManager.IMPORTANCE_HIGH;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
@@ -99,6 +100,12 @@ public final class AlarmReceiver extends BroadcastReceiver {
         );
 
         ScheduleAlarm.with(context).schedule(alarm, pIntent);
+    }
+
+    public static void setReminderAlarms(Context context, List<Alarm> alarms) {
+        for(Alarm alarm : alarms) {
+            setReminderAlarm(context, alarm);
+        }
     }
 
     /**
