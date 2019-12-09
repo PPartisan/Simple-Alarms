@@ -24,16 +24,16 @@ import com.github.ppartisan.simplealarms.R;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public final class AlarmLandingPageFragment extends Fragment implements SensorEventListener {
-    public  long lastTime;
-    public  float speed;
-    public  float lastX;
-    public  float lastY;
-    public  float lastZ;
-    public  float x, y, z;
+    private  long lastTime;
+    private   float speed;
+    private  float lastX;
+    private  float lastY;
+    private  float lastZ;
+    private  float x, y, z;
     private int count;
 
 
-    public static  int SHAKE_THRESHOLD = 100;
+    static final int SHAKE_THRESHOLD = 100;
     public static  int DATA_X = SensorManager.DATA_X;
     public static  int DATA_Y = SensorManager.DATA_Y;
     public static  int DATA_Z = SensorManager.DATA_Z;
@@ -68,12 +68,11 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
             }
         });
         pm=(PowerManager)getActivity().getSystemService(Context.POWER_SERVICE);
-        //wl=pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,"mytag");
-
 
         startvibe();
         return v;
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -86,6 +85,7 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -113,8 +113,8 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
             }
         }
     }
+    
     public void startvibe(){
         vibrator.vibrate(new long[]{100,1000,100,500,100,1000},0);
-
     }
 }
