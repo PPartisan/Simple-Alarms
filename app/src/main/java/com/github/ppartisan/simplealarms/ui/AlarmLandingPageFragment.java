@@ -19,8 +19,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.ppartisan.simplealarms.R;
-
-
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public final class AlarmLandingPageFragment extends Fragment implements SensorEventListener {
@@ -42,6 +40,7 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
     private PowerManager pm;
     private PowerManager.WakeLock wl;
     private Vibrator vibrator;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,11 +73,18 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        if(accelerormeterSensor!=null)
+            sensorManager.registerListener(this, accelerormeterSensor,
+                    SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         if (sensorManager != null)
             sensorManager.unregisterListener(this);
-        // wl.release();
     }
 
     @Override
@@ -105,7 +111,6 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
                         vibrator.cancel();
                         getActivity().finish();
                     }
-
                 }
                 lastX = event.values[DATA_X];
                 lastY = event.values[DATA_Y];
@@ -113,7 +118,7 @@ public final class AlarmLandingPageFragment extends Fragment implements SensorEv
             }
         }
     }
-    
+
     public void startvibe(){
         vibrator.vibrate(new long[]{100,1000,100,500,100,1000},0);
     }
