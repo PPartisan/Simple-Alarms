@@ -4,9 +4,9 @@
 
 This a straightforward alarm app for Android with the following features:
 
-* Store multiple alarms
-* Set indvidual days the alarm should repeat
-* Mute an alarm by removing all days
-* Shows notification with vibration and a noise when alarm sounds
+## 1) Store multiple alarms
+## 2) Set indvidual days the alarm should repeat
+## 3) Mute an alarm by removing all days
+## 4) Shows notification with vibration and a noise when alarm sounds
 
 Anyone is welcome to use this source code in their own app ([MIT Licence](https://github.com/PPartisan/Simple-Alarms/blob/master/LICENCE)). Attribution would be appreciated though! Thanks.
